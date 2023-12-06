@@ -37,5 +37,4 @@ public class Hotel {
     private boolean status;
 
 
-    // 省略getter和setter方法
 }

@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author M
@@ -57,14 +58,14 @@ public class TestSelect {
     @Test
     public void testSelectPagination() {
         System.out.println(("----- 分页查询所有数据 ------"));
-        IPage page = new Page(1, 10);//页面对象
-        hotelMapper.selectPage(page, null);
-
-        System.out.println("当前页码值"+page.getCurrent());
-        System.out.println("每页显示数"+page.getSize());
-        System.out.println("总共页数"+page.getPages());
-        System.out.println("总共条数"+page.getTotal());
-        System.out.println("页面数据"+page.getRecords());
+        Page<Hotel> hotelPage = new Page<>(1 , 10 , 100,false);//页面对象
+        Page<Hotel> hotelPageNew = hotelMapper.selectPage(hotelPage, null);
+        //记住 记住，记住 一定要去配分页拦截器去才可以生效，否则会把所有数据全部返回回来
+        System.out.println("当前页码值"+hotelPageNew.getCurrent());
+        System.out.println("每页显示数"+hotelPageNew.getSize());
+        System.out.println("总共页数"+hotelPageNew.getPages());
+        System.out.println("总共条数"+hotelPageNew.getTotal());
+        System.out.println("页面数据"+hotelPageNew.getRecords());
     }
 
 
@@ -134,6 +135,33 @@ public class TestSelect {
 
     }
 
+
+    @Test
+    public void testSelectMap() {
+        System.out.println(("----- 带有投影的条件查询 ------"));
+        LambdaQueryWrapper<Hotel> lqw=new LambdaQueryWrapper<Hotel>();
+        lqw.select(Hotel::getName,Hotel::getPrice,Hotel::getBrand);//只查询name price brand这三个字段
+        lqw.gt(Hotel::getPrice,1400);
+        List<Hotel> hotels = hotelMapper.selectList(lqw);
+        for (int i=0;i<hotels.size();i++){
+            System.out.println(hotels.get(i).toString());
+        }
+
+    }
+
+
+    @Test
+    public void testSelectMap2() {
+        System.out.println(("----- 带有group和count的投影条件查询 ------"));
+        QueryWrapper<Hotel>qw=new QueryWrapper<Hotel>();
+        qw.select("Count(*) as count , city");//按城市进行数量上的分类
+        qw.groupBy("city");
+        List<Map<String, Object>> maps = hotelMapper.selectMaps(qw);
+        for (int i=0;i<maps.size();i++){
+            System.out.println(maps.get(i));
+        }
+
+    }
 
 
 

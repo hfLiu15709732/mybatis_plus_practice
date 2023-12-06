@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mptest.mapper.HotelMapper">
+    <insert id="saveHotelsByNative">
+        INSERT INTO `tb_hotel` (id, name, address, price, score, brand, city, star_name, business, latitude, longitude, pic, deleted) VALUES
+        <foreach collection="list" separator="," item="item">
+            (#{item.id}, #{item.name}, #{item.address}, #{item.price}, #{item.score}, #{item.brand}, #{item.city}, #{item.starName}, #{item.business}, #{item.latitude}, #{item.longitude}, #{item.pic}, #{item.deleted})
+        </foreach>
+    </insert>
+
+</mapper>
